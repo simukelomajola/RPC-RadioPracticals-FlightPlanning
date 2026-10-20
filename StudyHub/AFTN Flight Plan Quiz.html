@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AFTN Flight Plan Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9eff5;--ink:#10243a;--muted:#4b6177;--card:#fff;--line:#b9c9d9;--accent:#1f4e79;--on-accent:#fff;--ok:#1e7a46;--okbg:#e1f4e8;--bad:#b3261e;--badbg:#fbe5e3;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a27;--ink:#e6eef7;--muted:#9bb0c4;--card:#16273a;--line:#2b4259;--accent:#7fb3e6;--on-accent:#0e1a27;--ok:#6fd49a;--okbg:#14382a;--bad:#ff8a80;--badbg:#3f1d1b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1a27;--ink:#e6eef7;--muted:#9bb0c4;--card:#16273a;--line:#2b4259;--accent:#7fb3e6;--on-accent:#0e1a27;--ok:#6fd49a;--okbg:#14382a;--bad:#ff8a80;--badbg:#3f1d1b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 Barlow,system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:20px 16px 40px}
+h1{font:700 30px/1.1 "Barlow Condensed",Barlow,sans-serif;margin:8px 0 4px}
+.sub{color:var(--muted);margin:0 0 16px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:15px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.field{display:inline-block;border:2px solid var(--accent);color:var(--accent);border-radius:4px;padding:0 8px;font:700 15px/22px Barlow,sans-serif;margin-bottom:10px}
+.q{font-weight:600;font-size:19px;margin:0 0 14px}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:transparent;border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;margin:0 0 10px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.opt:disabled{cursor:default}
+.exp{margin:6px 0 0;padding:12px 14px;border-left:4px solid var(--accent);background:var(--bg);border-radius:0 8px 8px 0}
+.btn{font:600 17px Barlow,sans-serif;background:var(--accent);color:var(--on-accent);border:0;border-radius:8px;padding:12px 22px;margin-top:14px;cursor:pointer}
+.score{font:700 56px/1 "Barlow Condensed",Barlow,sans-serif;margin:6px 0}
+.miss{margin:8px 0;padding-left:18px}
+[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>AFTN flight plan quiz</h1>
+<p class="sub">Based on the South African CA 172-04 form. Tap an answer to see why.</p>
+<div id="quiz">
+<div class="bar"><i id="prog"></i></div>
+<div class="meta"><span id="count"></span><span id="sc"></span></div>
+<div class="card">
+<span class="field" id="fld"></span>
+<p class="q" id="q"></p>
+<div id="opts"></div>
+<p class="exp" id="exp" hidden></p>
+<button class="btn" id="next" hidden></button>
+</div>
+</div>
+<div id="end" class="card" hidden>
+<p class="sub" style="margin:0">Your score</p>
+<div class="score" id="final"></div>
+<p id="verdict"></p>
+<p style="margin-bottom:0"><strong>Review these:</strong></p>
+<ul class="miss" id="miss"></ul>
+<button class="btn" id="again">Try again</button>
+</div>
+</main>
+<script>
+var Q=[
+{f:"Item 3",q:"What is the message type that opens a filed flight plan?",a:["(FPL","(CHG","(DLA","(CNL"],e:"A filed plan starts with (FPL. CHG changes, DLA delays and CNL cancels an existing plan."},
+{f:"Item 7",q:"What is the maximum length of the aircraft identification?",a:["7 characters","4 characters","10 characters","12 characters"],e:"Item 7 holds up to 7 alphanumeric characters, for example ZTAPS or ZSABC."},
+{f:"Item 8",q:"Which letter do you enter for flight rules on a VFR flight?",a:["V","I","Y","Z"],e:"I = IFR, V = VFR, Y = IFR first then VFR, Z = VFR first then IFR."},
+{f:"Item 8",q:"Which letter is the type of flight for general aviation?",a:["G","S","N","M"],e:"G = general aviation, S = scheduled, N = non-scheduled air transport, M = military, X = other."},
+{f:"Item 9",q:"The aircraft has no ICAO type designator, such as a multirotor drone. What goes in the type box?",a:["ZZZZ, with TYP/ in Item 18","UNKN","0000","The make of the aircraft"],e:"Use ZZZZ and give the type in Item 18 as TYP/MULTIROTOR."},
+{f:"Item 9",q:"Which wake turbulence category applies to an aircraft with a maximum take-off mass of 7 000 kg or less?",a:["L (light)","M (medium)","H (heavy)","J (super)"],e:"L is up to 7 000 kg, M is between 7 000 and 136 000 kg, H is 136 000 kg or more."},
+{f:"Item 13",q:"The departure point has no ICAO location indicator. What do you write in Item 13 and Item 18?",a:["ZZZZ in Item 13 and DEP/ in Item 18","Leave Item 13 blank","NONE in Item 13","The town name in Item 13"],e:"Use ZZZZ, then give the position in Item 18 as DEP/ followed by the name or coordinates."},
+{f:"Item 15",q:"What is the correct entry for a cruising speed of 10 knots?",a:["N0010","K0010","N010","M010"],e:"N = knots and K = km/h, followed by four digits. M = Mach, followed by three digits."},
+{f:"Item 15",q:"What goes in the level box for a VFR flight that is not given a flight level?",a:["VFR","F000","A000","0"],e:"Enter VFR. F is for flight levels and A for altitudes in hundreds of feet."},
+{f:"Item 15",q:"Which is the correct way to write the point 29°37’S 030°22’E in the route?",a:["2937S03022E","29°37’S 030°22’E","29.37S 30.22E","S2937 E03022"],e:"Degrees and minutes, with no spaces or symbols: 4 digits + N/S + 5 digits + E/W (11 characters)."},
+{f:"Item 18",q:"The flight is on 10 August 2021. How do you write the date of flight?",a:["DOF/210810","DOF/10AUG2021","DOF/100821","DOF/20211008"],e:"DOF/ uses YYMMDD, so 2021-08-10 is 210810. The sample form’s DOF/10AUG2021 is wrong."},
+{f:"Item 16",q:"How is the total estimated elapsed time (EET) written for a 20-minute flight?",a:["0020","20","0200","00:20"],e:"Four digits, HHMM, so 20 minutes is 0020. A destination without an ICAO indicator is ZZZZ with DEST/ in Item 18."},
+{f:"Item 18",q:"Which prefix would you use for the radio equipment, such as a handheld VHF?",a:["COM/","NAV/","RMK/","OPR/"],e:"COM/ is for communication equipment, NAV/ for navigation equipment such as GPS, RMK/ for remarks and OPR/ for the operator."},
+{f:"Item 19",q:"Endurance is E/0120 and the total EET is 0700. What is wrong?",a:["The EET is longer than the endurance","Nothing is wrong","Endurance must be in minutes","Endurance must be 0000"],e:"Endurance must be more than the EET. EET 0700 means 7 hours, which is far longer than 1 hour 20 minutes."},
+{f:"Item 19",q:"Is Item 19 (supplementary information) transmitted in the FPL message?",a:["No, it is not transmitted","Yes, always","Only for IFR flights","Only if persons on board exceed 10"],e:"Item 19 is kept by the ATS unit for search and rescue and is not transmitted in FPL messages."}
+];
+function sh(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+var i,score,missed;
+var $=function(id){return document.getElementById(id)};
+function start(){i=0;score=0;missed=[];$("end").hidden=true;$("quiz").hidden=false;show()}
+function show(){
+var d=Q[i];$("fld").textContent=d.f;$("q").textContent=d.q;
+$("count").textContent="Question "+(i+1)+" of "+Q.length;$("sc").textContent="Score "+score;
+$("prog").style.width=(i/Q.length*100)+"%";
+$("exp").hidden=true;$("next").hidden=true;
+var box=$("opts");box.innerHTML="";
+sh(d.a).forEach(function(t){
+var b=document.createElement("button");b.className="opt";b.textContent=t;
+b.onclick=function(){pick(b,t===d.a[0])};box.appendChild(b)});
+}
+function pick(btn,right){
+var d=Q[i];
+Array.prototype.forEach.call($("opts").children,function(b){b.disabled=true;if(b.textContent===d.a[0])b.classList.add("ok")});
+if(right){score++}else{btn.classList.add("bad");missed.push(d)}
+$("sc").textContent="Score "+score;
+$("exp").textContent=(right?"Correct. ":"Not quite. ")+d.e;$("exp").hidden=false;
+$("next").textContent=i===Q.length-1?"See results":"Next question";$("next").hidden=false;$("next").focus();
+}
+$("next").onclick=function(){if(i===Q.length-1){finish()}else{i++;show()}};
+function finish(){
+$("quiz").hidden=true;$("end").hidden=false;$("prog").style.width="100%";
+$("final").textContent=score+" / "+Q.length;
+var p=score/Q.length;
+$("verdict").textContent=p===1?"Perfect. You’re ready to write a full plan.":p>=.7?"Good work. Review the items below and try again.":"Keep practising. Go back to the field order and the Item 18 prefixes.";
+var m=$("miss");m.innerHTML="";
+if(!missed.length){m.innerHTML="<li>Nothing to review.</li>"}
+missed.forEach(function(d){var l=document.createElement("li");l.textContent=d.f+": "+d.q;m.appendChild(l)});
+}
+$("again").onclick=start;
+start();
+</script>
+</body>
+</html>

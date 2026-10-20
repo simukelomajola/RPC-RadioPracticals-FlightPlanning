@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aviation Documents Practice Questions</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9eff5;--ink:#10243a;--muted:#4b6177;--card:#fff;--line:#b9c9d9;--accent:#1f4e79;--on-accent:#fff;--ok:#1e7a46;--okbg:#e1f4e8;--bad:#b3261e;--badbg:#fbe5e3;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a27;--ink:#e6eef7;--muted:#9bb0c4;--card:#16273a;--line:#2b4259;--accent:#7fb3e6;--on-accent:#0e1a27;--ok:#6fd49a;--okbg:#14382a;--bad:#ff8a80;--badbg:#3f1d1b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1a27;--ink:#e6eef7;--muted:#9bb0c4;--card:#16273a;--line:#2b4259;--accent:#7fb3e6;--on-accent:#0e1a27;--ok:#6fd49a;--okbg:#14382a;--bad:#ff8a80;--badbg:#3f1d1b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 Barlow,system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px 14px 44px}
+h1{font:700 30px/1.1 "Barlow Condensed",Barlow,sans-serif;margin:6px 0 2px}
+.sub{color:var(--muted);margin:0 0 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{font:600 16px Barlow,sans-serif;padding:9px 14px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:20px;cursor:pointer}
+.chip small{font-weight:400;opacity:.8}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:15px;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.tag{display:inline-block;border:2px solid var(--accent);color:var(--accent);border-radius:4px;padding:0 8px;font:700 15px/22px Barlow,sans-serif;margin-bottom:10px}
+.q{font-weight:600;font-size:19px;margin:0 0 14px}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:transparent;border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;margin:0 0 10px;cursor:pointer}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.opt:disabled{cursor:default}
+.opt.sel{border-color:var(--accent);background:var(--bg)}
+.exp{margin:6px 0 0;padding:12px 14px;border-left:4px solid var(--accent);background:var(--bg);border-radius:0 8px 8px 0}
+.btn{font:600 17px Barlow,sans-serif;background:var(--accent);color:var(--on-accent);border:0;border-radius:8px;padding:12px 22px;margin:14px 8px 0 0;cursor:pointer}
+.btn.alt{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn:focus-visible,.opt:focus-visible,.chip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.score{font:700 56px/1 "Barlow Condensed",Barlow,sans-serif;margin:6px 0}
+.miss{margin:8px 0;padding-left:18px}
+.note{font-size:14px;color:var(--muted);margin-top:14px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>Aviation documents practice</h1>
+<p class="sub">CAA-style multiple choice on the AIP, AIP SUP, NOTAMs, AICs and where to find them. Pick a topic, or take a 20-question mock test with the answers shown at the end. Questions you miss are saved under Weak spots.</p>
+
+<div id="menu">
+<div class="chips" id="chips"></div>
+</div>
+
+<div id="quiz" hidden>
+<div class="bar"><i id="prog"></i></div>
+<div class="meta"><span id="count"></span><span id="sc"></span></div>
+<div class="card">
+<span class="tag" id="tag"></span>
+<p class="q" id="q"></p>
+<div id="opts"></div>
+<p class="exp" id="exp" hidden></p>
+<button class="btn" id="next" hidden></button>
+</div>
+</div>
+
+<div id="end" class="card" hidden>
+<p class="sub" style="margin:0">Your score</p>
+<div class="score" id="final"></div>
+<p id="verdict"></p>
+<p style="margin-bottom:0" id="mh"><strong>Review these:</strong></p>
+<ul class="miss" id="miss"></ul>
+<button class="btn" id="retry" hidden>Retry the ones I missed</button>
+<button class="btn alt" id="menuBtn">Choose another topic</button>
+</div>
+
+<p class="note">Answers follow ICAO Annex 15 and common South African practice. If your course handout words something differently, go with your handout.</p>
+</main>
+<script>
+var Q=[
+{t:"AIP",q:"What does AIP stand for?",a:["Aeronautical Information Publication","Air Information Procedure","Aviation Instruction Permit","Approved Instrument Procedure"],e:"The AIP is the Aeronautical Information Publication. It is the State’s main reference for permanent aviation information."},
+{t:"AIP",q:"What kind of information does the AIP mainly contain?",a:["Permanent information essential to air navigation","Information that changes every day","Weather forecasts","Pilot licence results"],e:"The AIP holds permanent information. Temporary or urgent changes go in NOTAMs or AIP Supplements."},
+{t:"AIP",q:"Which part of the AIP contains information on individual aerodromes, such as runway data and frequencies?",a:["AD","GEN","ENR","SUP"],e:"The AIP has three parts: GEN (general), ENR (en-route) and AD (aerodromes)."},
+{t:"AIP",q:"Which part of the AIP contains prohibited, restricted and danger areas?",a:["ENR","AD","GEN","AIC"],e:"ENR (en-route) covers airspace, routes, navigation aids and navigation warnings, including prohibited, restricted and danger areas."},
+{t:"AIP",q:"Which part of the AIP contains abbreviations, units of measurement and national regulations?",a:["GEN","AD","ENR","NOTAM"],e:"GEN (general) holds items such as abbreviations, units of measurement and the regulatory framework."},
+{t:"AIP",q:"AIP amendments are published on a fixed cycle called AIRAC. How long is one AIRAC cycle?",a:["28 days","7 days","14 days","90 days"],e:"AIRAC cycles are 28 days, so operationally significant changes take effect on common dates."},
+{t:"AIP",q:"Which ICAO Annex sets the rules for Aeronautical Information Services?",a:["Annex 15","Annex 1","Annex 6","Annex 14"],e:"Annex 15 covers Aeronautical Information Services. Annex 1 is licensing and Annex 14 is aerodromes."},
+{t:"AIP",q:"You plan to use an AIP page you printed three months ago. What should you do before flying?",a:["Check that it is the current version and read the latest NOTAMs","Use it as it is, because the AIP never changes","Ask another pilot what changed","Only check the weather"],e:"The AIP is amended regularly. Always confirm you have the current amendments and check NOTAMs for anything newer."},
+{t:"AIP SUP",q:"What does AIP SUP stand for?",a:["AIP Supplement","AIP Super","AIP Support","AIP Summary"],e:"An AIP Supplement is a temporary addition to the AIP."},
+{t:"AIP SUP",q:"An AIP Supplement is used for which kind of information?",a:["Temporary changes of long duration, and short-duration information with extensive text or graphics","Only emergency closures lasting an hour","Permanent changes to the AIP","Daily weather reports"],e:"Long duration means three months or longer. Short-duration information with a lot of text or charts also goes in a Supplement."},
+{t:"AIP SUP",q:"A major airshow needs a detailed map and several pages of text, and lasts three days. Where is this most likely published?",a:["AIP Supplement","AIC only","A one-line NOTAM","The METAR"],e:"Short-duration information with extensive text or graphics is published as an AIP Supplement."},
+{t:"AIP SUP",q:"A runway is expected to be shortened for six months because of construction. Which publication fits best?",a:["AIP Supplement","NOTAM only","AIC","TAF"],e:"A temporary change of long duration (three months or more) is published as an AIP Supplement."},
+{t:"NOTAM",q:"What does NOTAM stand for?",a:["Notice to Airmen","Notification of Aircraft Movements","National Operational Terminal Area Map","Notice of Airspace Measurement"],e:"A NOTAM is a notice, distributed by telecommunication, about a facility, service, procedure or hazard."},
+{t:"NOTAM",q:"Which best describes a NOTAM?",a:["Timely information on the establishment, condition or change of a facility, service, procedure or hazard","A permanent description of every aerodrome","A pilot’s flight plan","A weather forecast"],e:"NOTAMs carry information that flight crews need to know in time, which is often temporary."},
+{t:"NOTAM",q:"The runway at your aerodrome is closed tonight for maintenance. Where would you expect to read this?",a:["NOTAM","AIP GEN","AIC","The aircraft logbook"],e:"A short-term closure is typical NOTAM content."},
+{t:"NOTAM",q:"In a NOTAM, what does item A) contain?",a:["The location (aerodrome or FIR) affected","The start time","The text of the message","The upper limit"],e:"A) gives the location. B) is the start of validity, C) the end, and E) the text."},
+{t:"NOTAM",q:"In a NOTAM, what do items B) and C) contain?",a:["The start and end of validity","The runway numbers","The pilot’s name and licence","The frequency and callsign"],e:"B) is the start of validity and C) is the end."},
+{t:"NOTAM",q:"A NOTAM shows B) 2610221200. What does it mean?",a:["22 October 2026 at 12:00 UTC","26 October 2022 at 10:00 UTC","10 February 2026 at 12:00 local","22 October 2026 at 12:00 SAST"],e:"The format is YYMMDDHHMM in UTC. 26-10-22 12:00 is 22 October 2026 at 12:00 UTC."},
+{t:"NOTAM",q:"Item E) of a NOTAM contains…",a:["The message text in plain language","The effective date","The location indicator","The lower limit"],e:"E) is the text that describes the hazard, closure or change."},
+{t:"NOTAM",q:"A NOTAM type ending in “C” (NOTAMC) means…",a:["It cancels an earlier NOTAM","It is a new NOTAM","It replaces an earlier NOTAM","It is a correction to the AIP"],e:"NOTAMN is new, NOTAMR replaces and NOTAMC cancels."},
+{t:"NOTAM",q:"You plan a drone flight near an aerodrome next week. Which source shows temporary hazards and closures for that period?",a:["NOTAMs","The AIP phonetic alphabet page","Your pilot’s licence","The previous year’s AIC"],e:"Check NOTAMs for the aerodrome and airspace along your route before every flight."},
+{t:"AIC",q:"What does AIC stand for?",a:["Aeronautical Information Circular","Air Instruction Code","Approved Instrument Chart","Aviation Incident Certificate"],e:"An AIC is an Aeronautical Information Circular."},
+{t:"AIC",q:"Which information is normally published in an AIC?",a:["Explanatory or advisory information that does not qualify for a NOTAM or an AIP entry","Urgent runway closures","Daily weather","Flight plans"],e:"AICs carry advisory, explanatory or administrative information that affects flight safety or operations but does not fit the AIP or a NOTAM."},
+{t:"AIC",q:"The authority wants to warn pilots about a major change to regulations planned for next year. Where is this most likely published?",a:["AIC","NOTAM","METAR","Aerodrome chart"],e:"A long-term forecast of a major change in legislation, regulations, procedures or facilities is typical AIC content."},
+{t:"AIC",q:"Which is the best choice for an urgent closure of a taxiway tomorrow morning?",a:["NOTAM, not an AIC","AIC, not a NOTAM","AIP GEN","None, it is not published"],e:"Urgent, timely information goes in a NOTAM. AICs are for advisory or explanatory information."},
+{t:"Rules and sites",q:"Where would you download SACAA forms such as the CA 172-04 flight plan?",a:["The SACAA website","The South African Weather Service website","A flight school’s Facebook page","The aircraft manual"],e:"The SACAA (www.caa.co.za) is the regulator and publishes regulations, forms and licensing information."},
+{t:"Rules and sites",q:"Which organisation’s website would you use to look up the AIP, NOTAMs and AICs?",a:["ATNS","The SACAA licensing page only","A weather website","An aircraft manufacturer"],e:"ATNS (Air Traffic and Navigation Services) provides the aeronautical information services, including the AIP, NOTAMs and AICs."},
+{t:"Rules and sites",q:"Which organisation issues a remote pilot licence (RPL) in South Africa?",a:["SACAA","ATNS","SAWS","ICAO"],e:"The South African Civil Aviation Authority issues licences and regulates aviation."},
+{t:"Rules and sites",q:"Which part of the Civil Aviation Regulations deals with remotely piloted aircraft systems?",a:["Part 101","Part 61","Part 91","Part 139"],e:"Part 101 covers RPAS. Part 61 is pilot licensing and Part 91 is general operating rules."},
+{t:"Rules and sites",q:"Which Act is the main law governing civil aviation in South Africa?",a:["Civil Aviation Act 13 of 2009","Road Traffic Act","National Land Transport Act","Aviation Act 1 of 1990"],e:"The Civil Aviation Act 13 of 2009 is the main aviation law, with the Civil Aviation Regulations beneath it."},
+{t:"Weather and time",q:"Which time reference is used in NOTAMs and flight plans?",a:["UTC","Local time","SAST only","Sunrise time"],e:"Aviation uses UTC so everyone works to the same clock."},
+{t:"Weather and time",q:"South African Standard Time is UTC+2. What is 09:00 SAST in UTC?",a:["0700","0900","1100","0600"],e:"Subtract two hours: 09:00 SAST is 07:00 UTC."},
+{t:"Weather and time",q:"Which organisation provides official aviation weather forecasts in South Africa?",a:["South African Weather Service","ATNS tower staff only","SACAA licensing office","Airlines"],e:"The South African Weather Service (SAWS) issues aviation weather products."},
+{t:"Weather and time",q:"What is a METAR?",a:["A routine aerodrome weather report","An aerodrome weather forecast","A notice of hazards","A flight plan message"],e:"A METAR reports observed weather. A TAF is the forecast."},
+{t:"Weather and time",q:"What is a TAF?",a:["An aerodrome weather forecast","An observed weather report","A type of NOTAM","A chart of restricted areas"],e:"A TAF is the aerodrome forecast. A METAR is what is being observed now."},{t:'Radio',q:'What is the aviation VHF communication band?',a:['118.000 to 136.975 MHz','88 to 108 MHz','1 090 MHz','300 to 3 000 kHz'],e:'Aeronautical VHF voice communication uses 118.000 to 136.975 MHz. 88 to 108 MHz is FM broadcast radio.'},{t:'Radio',q:'Your squelch is set too high. What happens?',a:['Weak calls may not be heard','Everyone hears you louder','Your transmitter stops working','The frequency changes'],e:'Squelch mutes the hiss when no signal is present. Set too high, it also blocks weak signals.'},{t:'Radio',q:'What does the volume control do?',a:['Sets how loud you hear incoming audio','Sets how far you can transmit','Changes the frequency','Switches on the transponder'],e:'Volume only changes what you hear. It does not change how others hear you.'},{t:'Radio',q:'VHF radio range is mainly limited by…',a:['Line of sight, so more altitude gives more range','The size of the aircraft','The time of day','The colour of the antenna'],e:'VHF signals travel in straight lines, so terrain and the horizon limit range. Flying higher extends it.'},{t:'Radio',q:'What does PTT stand for?',a:['Push to talk','Power to transmit','Pilot tower transfer','Public telephone terminal'],e:'You hold the PTT button to transmit and release it to listen.'},{t:'Radio',q:'What should you do before you transmit on a frequency?',a:['Listen to make sure it is not in use','Switch off the squelch','Turn the volume to zero','Call twice quickly'],e:'Listen first so you do not talk over another call.'},{t:'Radio',q:'What is a radio check used for?',a:['To confirm your radio works and how clearly you are heard','To request a landing clearance','To report an emergency','To file a flight plan'],e:'A radio check tests your transmitter and receiver and gets a readability report.'},{t:'Radio',q:'Which prefix is used for civil aircraft registered in South Africa?',a:['ZS (also ZT and ZU)','VH','N','G'],e:'South African civil registrations start with ZS, ZT or ZU. VH is Australia, N is the USA and G is the United Kingdom.'},{t:'Radio',q:'How do you spell ZS-ABC in the phonetic alphabet?',a:['Zulu Sierra Alfa Bravo Charlie','Zebra Sierra Alpha Bravo Charlie','Zulu Sugar Alfa Baker Charlie','Zulu Sierra Alpha Beta Charlie'],e:'The standard words are Zulu, Sierra, Alfa, Bravo and Charlie. Note the spelling Alfa, not Alpha.'},{t:'Radio',q:'Which frequency is the international VHF emergency frequency?',a:['121.5 MHz','118.0 MHz','122.8 MHz','136.9 MHz'],e:'121.5 MHz is the international VHF emergency frequency.'},{t:'Phrases',q:'What does a steady green light from the tower mean to an aircraft in flight?',a:['Cleared to land','Return for landing','Give way and continue circling','Airport unsafe, do not land'],e:'In flight: steady green = cleared to land, flashing green = return for landing, steady red = give way and continue circling, flashing red = airport unsafe, do not land.'},{t:'Phrases',q:'What does a steady red light mean to an aircraft in flight?',a:['Give way to other aircraft and continue circling','Cleared to land','Return for landing','Cleared for take-off'],e:'In flight, steady red means give way and continue circling. Flashing red means the airport is unsafe and you must not land.'},{t:'Phrases',q:'You are on the ground and the tower shows a steady red light. What must you do?',a:['Stop','Take off','Taxi clear of the landing area','Return to your starting point'],e:'On the ground: steady green = cleared for take-off, flashing green = cleared to taxi, steady red = stop, flashing red = taxi clear of the landing area in use, flashing white = return to starting point.'},{t:'Phrases',q:'What does an alternating red and green light signal mean?',a:['Exercise extreme caution','Cleared to land','Stop immediately','Aerodrome closed'],e:'Alternating red and green is a general warning signal: exercise extreme caution.'},{t:'Phrases',q:'Survivors on the ground lay out a large X. What does it mean?',a:['Require medical assistance','Require assistance','Yes','No'],e:'Standard ground signals: V = require assistance, X = require medical assistance, N = no, Y = yes.'},{t:'Phrases',q:'How does an aircraft acknowledge a ground signal by day?',a:['By rocking its wings','By flashing the strobe once','By turning on the landing light only','By circling twice'],e:'By day the aircraft rocks its wings. At night it flashes its landing or navigation lights.'},{t:'Phrases',q:'When may you shorten the callsign ZS-ABC to Zulu Bravo Charlie?',a:['After the ground station has used the short form','Always','Never','Only in an emergency'],e:'Use the full callsign first. Shorten it only after the other station does.'},{t:'Phrases',q:'Which numeral is pronounced FIFE?',a:['5','3','9','4'],e:'5 is FIFE, 3 is TREE, 9 is NIN-er and 4 is FOW-er.'},{t:'Phrases',q:'Which items must be read back to the controller?',a:['Runway in use, altimeter settings, SSR codes and level instructions','Only the weather','Nothing in VFR','Only your callsign'],e:'Safety-related clearances and instructions are read back: runway in use, altimeter settings, SSR codes, and level, heading and speed instructions.'},{t:'Phrases',q:'Which words do you use to ask for a message to be repeated?',a:['SAY AGAIN','REPEAT','PARDON','ENCORE'],e:'Use SAY AGAIN. Avoid REPEAT in radio phraseology.'},{t:'Phrases',q:'What does DOF/ mean in Item 18 of a flight plan?',a:['Date of flight, written YYMMDD','Distance of flight','Direction of flight','Duration of flight'],e:'DOF/ is the date of flight, for example DOF/261022.'},{t:'Phrases',q:'What is QNH?',a:['An altimeter setting that makes the altimeter read altitude above mean sea level','The wind direction','A transponder code','The runway length'],e:'With QNH set, the altimeter reads altitude above mean sea level. QFE gives height above the aerodrome.'},{t:'Calls',q:'Which order is correct for an initial call?',a:['Station called, your callsign, then position and intentions','Your intentions, then the station called','Position, then your callsign, then the station','Your callsign only'],e:'Say who you are calling and who you are first, then give the details others need.'},{t:'Calls',q:'Before you have a take-off clearance, which phrase is correct?',a:['Ready for departure','Ready for take-off','Ready to go','Take-off now'],e:'The word take-off is used only when giving or reading back a take-off clearance. Otherwise say departure.'},{t:'Calls',q:'The tower says “Report overhead”. What is the best reply?',a:['Wilco','Roger','Affirm','Negative'],e:'WILCO means you understand and will comply. ROGER only says you received the message.'},{t:'Calls',q:'A station says “ZS-ABC, say again”. What do you do?',a:['Repeat your last transmission','Change frequency','Stay silent','Squawk 7600'],e:'SAY AGAIN is a request to repeat the transmission, or the part named.'},{t:'Calls',q:'Which word is not normally used on VHF telephony?',a:['OVER','ROGER','AFFIRM','STANDBY'],e:'OVER is not normally used on VHF. The other three are standard words.'},{t:'Calls',q:'A station answers your radio check with “readability three”. What does it mean?',a:['Readable but with difficulty','Perfectly readable','Unreadable','Readable now and then'],e:'1 unreadable, 2 readable now and then, 3 readable but with difficulty, 4 readable, 5 perfectly readable.'},{t:'Calls',q:'You have vacated the runway after landing at an uncontrolled aerodrome. What should you broadcast?',a:['Your callsign and that you have vacated the runway','Nothing, switch the radio off','A MAYDAY call','Your flight plan'],e:'Tell other traffic the runway is clear so they know it is free.'},{t:'Calls',q:'Why do you broadcast your position and intentions at an uncontrolled aerodrome?',a:['So other pilots know where you are and what you will do','To get an automatic clearance','Because a flight plan is required','To test the radio'],e:'No controller sequences traffic there, so pilots rely on each other’s calls and a good lookout.'},{t:'Calls',q:'You make a mistake in your transmission. Which word starts the fix?',a:['CORRECTION','DISREGARD','NEGATIVE','WILCO'],e:'Say CORRECTION, then the right version. DISREGARD means ignore the last message.'},{t:'Emergency',q:'What do you say first when you declare a distress?',a:['MAYDAY MAYDAY MAYDAY','PAN-PAN PAN-PAN PAN-PAN','HELP HELP HELP','SOS SOS SOS'],e:'MAYDAY is said three times to mark a distress call.'},{t:'Emergency',q:'After the three MAYDAYs, what comes next?',a:['The station addressed and your callsign','Your licence number','The weather','The aircraft colour'],e:'Order: MAYDAY x3, station addressed and callsign, nature of the emergency, intentions, position, level and heading, then other information such as persons on board.'},{t:'Emergency',q:'Which is not normally part of a MAYDAY call?',a:['Your licence number','Nature of the emergency','Your intentions','Position, level and heading'],e:'Give the nature of the emergency, your intentions and your position. Your licence number is not needed.'},{t:'Emergency',q:'You have an engine fire in flight. Which call do you make?',a:['MAYDAY','PAN-PAN','STANDBY','ROGER'],e:'A fire is grave and imminent danger, so declare distress with MAYDAY.'},{t:'Emergency',q:'An engine is running rough, but you can still reach an aerodrome. Which call fits best?',a:['PAN-PAN','MAYDAY','Squawk 7500','WILCO'],e:'PAN-PAN is for urgency with no immediate danger. If it gets worse, upgrade to MAYDAY.'},{t:'Emergency',q:'Which transponder code means general emergency?',a:['7700','7600','7500','7000'],e:'7700 is general emergency, 7600 is radio failure and 7500 is unlawful interference.'},{t:'Emergency',q:'Which transponder code means radio failure?',a:['7600','7700','7500','1200'],e:'7600 is radio failure.'},{t:'Emergency',q:'Which transponder code means unlawful interference (hijack)?',a:['7500','7600','7700','7000'],e:'7500 is unlawful interference.'},{t:'Emergency',q:'You get no reply to your MAYDAY on the current frequency. What next?',a:['Repeat the call on 121.5 MHz','Stop transmitting','Switch the radio off','Wait ten minutes'],e:'If there is no reply, repeat the distress call on the emergency frequency 121.5 MHz.'},{t:'Emergency',q:'You suspect radio failure. What do you check first?',a:['Volume, frequency, headset and plugs, and the circuit breaker','The flight plan','Your licence','The wind'],e:'Check the simple causes first: volume, frequency, headset and plugs, fuse or circuit breaker.'},{t:'Emergency',q:'You cannot hear a reply but your transmitter may still work. What do you say before your message?',a:['TRANSMITTING BLIND','NO REPLY','NEGATIVE','OUT'],e:'TRANSMITTING BLIND tells others you are sending without being able to hear a reply.'},{t:'Emergency',q:'Why are MAYDAY and PAN-PAN said three times?',a:['So the call is recognised and not mistaken for normal traffic','To save time','So the controller can record it','To switch the radio to 121.5'],e:'Repeating the word makes sure the call is noticed and understood.'}
+];
+var TOPICS=['Mock test','Weak spots','All','AIP','AIP SUP','NOTAM','AIC','Rules and sites','Weather and time','Radio','Phrases','Calls','Emergency'],cur=[],i=0,score=0,missed=[],topic='All',EX=false,W=[];try{W=JSON.parse(localStorage.getItem('avq-weak')||'[]')}catch(x){}function saveW(){try{localStorage.setItem('avq-weak',JSON.stringify(W))}catch(x){}}
+var $=function(x){return document.getElementById(x)};
+function sh(a){a=a.slice();for(var k=a.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1)),t=a[k];a[k]=a[j];a[j]=t}return a}
+function menu(){
+$("menu").hidden=false;$("quiz").hidden=true;$("end").hidden=true;
+var c=$("chips");c.innerHTML="";
+TOPICS.forEach(function(t){if(t==='Weak spots'&&!W.length)return;var n=t==='All'?Q.length:t==='Mock test'?20:t==='Weak spots'?W.length:Q.filter(function(x){return x.t===t}).length,b=document.createElement('button');b.className="chip";b.innerHTML=t+" <small>"+n+"</small>";b.onclick=function(){begin(t)};c.appendChild(b)});
+}
+function begin(t,list){topic=t;EX=t==='Mock test'&&!list;cur=sh(list||(t==='All'?Q:t==='Mock test'?sh(Q).slice(0,20):t==='Weak spots'?Q.filter(function(x){return W.indexOf(x.q)>-1}):Q.filter(function(x){return x.t===t})));i=0;score=0;missed=[];$("menu").hidden=true;$("end").hidden=true;$("quiz").hidden=false;show()}
+function show(){
+var d=cur[i];$("tag").textContent=d.t;$("q").textContent=d.q;
+$('count').textContent='Question '+(i+1)+' of '+cur.length;$('sc').textContent=EX?'Mock test':'Score '+score;
+$("prog").style.width=(i/cur.length*100)+"%";$("exp").hidden=true;$("next").hidden=true;
+var b=$("opts");b.innerHTML="";
+sh(d.a).forEach(function(t){var o=document.createElement("button");o.className="opt";o.textContent=t;o.onclick=function(){pick(o,t===d.a[0])};b.appendChild(o)});
+}
+function pick(btn,right){
+var d=cur[i];
+[].forEach.call($("opts").children,function(b){b.disabled=true;if(!EX&&b.textContent===d.a[0])b.classList.add('ok')});
+if(right)score++;else{if(!EX)btn.classList.add('bad');missed.push(d)}if(EX)btn.classList.add('sel');
+if(!EX){$('sc').textContent='Score '+score;$('exp').textContent=(right?'Correct. ':'Not quite. ')+d.e;$('exp').hidden=false;}
+$("next").textContent=i===cur.length-1?"See results":"Next question";$("next").hidden=false;$("next").focus();
+}
+$("next").onclick=function(){if(i===cur.length-1){finish()}else{i++;show()}};
+function finish(){
+$("quiz").hidden=true;$("end").hidden=false;
+$('final').textContent=score+' / '+cur.length;cur.forEach(function(d){var k=W.indexOf(d.q);if(missed.indexOf(d)>-1){if(k<0)W.push(d.q)}else if(k>-1)W.splice(k,1)});saveW();
+var p=score/cur.length;
+$("verdict").textContent=p===1?"Perfect. You know this topic.":p>=.8?"Good. Review the ones below and try again.":"Keep going. Retry the missed questions until they stick.";
+var m=$("miss");m.innerHTML="";
+missed.forEach(function(d){var l=document.createElement("li");l.textContent=d.q+" Answer: "+d.a[0];m.appendChild(l)});
+$("mh").hidden=!missed.length;$("retry").hidden=!missed.length;
+}
+$("retry").onclick=function(){begin(topic,missed.slice())};
+$("menuBtn").onclick=menu;
+menu();
+</script>
+</body>
+</html>

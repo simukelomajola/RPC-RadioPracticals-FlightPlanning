@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AFTN Flight Plan Form (CA 172-04)</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9eff5;--ink:#10243a;--muted:#4b6177;--card:#fff;--line:#b9c9d9;--accent:#1f4e79;--on-accent:#fff;--ok:#1e7a46;--bad:#b3261e;--warnbg:#fbe5e3;--okbg:#e1f4e8;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a27;--ink:#e6eef7;--muted:#9bb0c4;--card:#16273a;--line:#2b4259;--accent:#7fb3e6;--on-accent:#0e1a27;--ok:#6fd49a;--bad:#ff8a80;--warnbg:#3f1d1b;--okbg:#14382a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1a27;--ink:#e6eef7;--muted:#9bb0c4;--card:#16273a;--line:#2b4259;--accent:#7fb3e6;--on-accent:#0e1a27;--ok:#6fd49a;--bad:#ff8a80;--warnbg:#3f1d1b;--okbg:#14382a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 Barlow,system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px 14px 48px}
+h1{font:700 30px/1.1 "Barlow Condensed",Barlow,sans-serif;margin:6px 0 2px}
+.sub{color:var(--muted);margin:0 0 12px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.btn{font:600 15px Barlow,sans-serif;background:var(--accent);color:var(--on-accent);border:0;border-radius:8px;padding:9px 16px;cursor:pointer}
+.btn.alt{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+h2{font:700 20px/1.1 "Barlow Condensed",Barlow,sans-serif;margin:0 0 10px;color:var(--accent)}
+.row{display:flex;flex-wrap:wrap;gap:10px 12px}
+label{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:2px}
+.f{flex:0 0 auto}.w{flex:1 1 220px}
+input[type=text],textarea{font:600 17px Barlow,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:6px;padding:7px 9px;width:100%}
+textarea{resize:vertical;min-height:84px;letter-spacing:.03em}
+.s1{width:54px}.s4{width:96px}.s5{width:118px}.s7{width:150px}.s8{width:172px}.s6{width:130px}
+.chk{display:inline-flex;align-items:center;gap:6px;margin:2px 14px 2px 0;font-size:15px;color:var(--ink);font-weight:400}
+.chk input{width:20px;height:20px;accent-color:var(--accent)}
+.note{font-size:13px;color:var(--muted);margin:6px 0 0}
+pre{margin:0;padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:8px;font:600 15px/1.5 Barlow,sans-serif;white-space:pre-wrap;word-break:break-all;letter-spacing:.04em}
+.chk-list{margin:10px 0 0;padding:0;list-style:none}
+.chk-list li{padding:7px 10px;border-radius:6px;margin-bottom:6px;font-size:15px}
+.chk-list .w1{background:var(--warnbg);color:var(--bad)}
+.chk-list .ok{background:var(--okbg);color:var(--ok)}
+.foot{font-size:13px;color:var(--muted)}
+@media print{.tools,.out-tools,.chk-list{display:none}body{background:#fff;color:#000}section{break-inside:avoid;border-color:#000}:root{--bg:#fff;--card:#fff;--ink:#000;--line:#000}}
+</style>
+</head>
+<body>
+<main>
+<h1>AFTN flight plan</h1>
+<p class="sub">Editable version of CA 172-04. Type in capitals, and the message and checks update as you go.</p>
+<div class="tools">
+<button class="btn" id="sample">Load sample</button>
+<button class="btn alt" id="clear">Clear form</button>
+<button class="btn alt" onclick="window.print()">Print</button>
+</div>
+
+<section>
+<h2>Header</h2>
+<div class="row">
+<div class="f"><label for="pri">Priority</label><input type="text" id="pri" class="s4" maxlength="2" value="FF"></div>
+<div class="w"><label for="addr">Addressee(s)</label><textarea id="addr" rows="2" style="min-height:52px"></textarea></div>
+</div>
+<div class="row" style="margin-top:10px">
+<div class="f"><label for="ftime">Filing time (DDHHMM)</label><input type="text" id="ftime" class="s6" maxlength="6" inputmode="numeric"></div>
+<div class="f"><label for="orig">Originator (8 letters)</label><input type="text" id="orig" class="s8" maxlength="8"></div>
+</div>
+</section>
+
+<section>
+<h2>Items 3 to 10: aircraft</h2>
+<div class="row">
+<div class="f"><label>3. Message type</label><input type="text" class="s5" value="(FPL" disabled></div>
+<div class="f"><label for="id">7. Aircraft ID</label><input type="text" id="id" class="s7" maxlength="7"></div>
+<div class="f"><label for="rules">8. Flight rules</label><input type="text" id="rules" class="s1" maxlength="1"></div>
+<div class="f"><label for="ftype">Type of flight</label><input type="text" id="ftype" class="s1" maxlength="1"></div>
+</div>
+<div class="row" style="margin-top:10px">
+<div class="f"><label for="num">9. Number</label><input type="text" id="num" class="s1" maxlength="2" inputmode="numeric"></div>
+<div class="f"><label for="ac">Type of aircraft</label><input type="text" id="ac" class="s4" maxlength="4"></div>
+<div class="f"><label for="wake">Wake cat</label><input type="text" id="wake" class="s1" maxlength="1"></div>
+<div class="f"><label for="equip">10. Equipment</label><input type="text" id="equip" class="s8" maxlength="20"></div>
+</div>
+<p class="note">Rules: I, V, Y or Z. Type of flight: S, N, G, M or X. Wake: L, M, H or J.</p>
+</section>
+
+<section>
+<h2>Items 13 and 15: departure and route</h2>
+<div class="row">
+<div class="f"><label for="dep">13. Departure aerodrome</label><input type="text" id="dep" class="s4" maxlength="4"></div>
+<div class="f"><label for="time">Time (HHMM)</label><input type="text" id="time" class="s4" maxlength="4" inputmode="numeric"></div>
+<div class="f"><label for="speed">15. Cruising speed</label><input type="text" id="speed" class="s5" maxlength="5"></div>
+<div class="f"><label for="level">Level</label><input type="text" id="level" class="s5" maxlength="5"></div>
+</div>
+<div style="margin-top:10px"><label for="route">Route</label><textarea id="route"></textarea></div>
+<p class="note">Write points as 2905S02614E, with no spaces, degree signs or dots.</p>
+</section>
+
+<section>
+<h2>Item 16: destination</h2>
+<div class="row">
+<div class="f"><label for="dest">Destination aerodrome</label><input type="text" id="dest" class="s4" maxlength="4"></div>
+<div class="f"><label for="eet">Total EET (HHMM)</label><input type="text" id="eet" class="s4" maxlength="4" inputmode="numeric"></div>
+<div class="f"><label for="alt1">Alternate</label><input type="text" id="alt1" class="s4" maxlength="4"></div>
+<div class="f"><label for="alt2">2nd alternate</label><input type="text" id="alt2" class="s4" maxlength="4"></div>
+</div>
+</section>
+
+<section>
+<h2>Item 18: other information</h2>
+<label for="i18">Use prefixes such as STS/, TYP/, COM/, NAV/, DEP/, DEST/, DOF/, OPR/, RMK/</label>
+<textarea id="i18" rows="5" style="min-height:120px"></textarea>
+<p class="note">Date of flight is DOF/YYMMDD, for example DOF/251011.</p>
+</section>
+
+<section>
+<h2>Item 19: supplementary information</h2>
+<p class="note" style="margin:0 0 10px">Not transmitted in the FPL message. Tick what is carried.</p>
+<div class="row">
+<div class="f"><label for="end">Endurance E/ (HHMM)</label><input type="text" id="end" class="s4" maxlength="4" inputmode="numeric"></div>
+<div class="f"><label for="pob">Persons on board P/</label><input type="text" id="pob" class="s4" maxlength="3"></div>
+</div>
+<div style="margin-top:10px"><label>Emergency radio R/</label>
+<span class="chk"><input type="checkbox" data-g="R" value="U">UHF</span><span class="chk"><input type="checkbox" data-g="R" value="V">VHF</span><span class="chk"><input type="checkbox" data-g="R" value="E">ELT</span></div>
+<div style="margin-top:6px"><label>Survival equipment S/</label>
+<span class="chk"><input type="checkbox" data-g="S" value="P">Polar</span><span class="chk"><input type="checkbox" data-g="S" value="D">Desert</span><span class="chk"><input type="checkbox" data-g="S" value="M">Maritime</span><span class="chk"><input type="checkbox" data-g="S" value="J">Jungle</span></div>
+<div style="margin-top:6px"><label>Jackets J/</label>
+<span class="chk"><input type="checkbox" data-g="J" value="L">Light</span><span class="chk"><input type="checkbox" data-g="J" value="F">Fluores</span><span class="chk"><input type="checkbox" data-g="J" value="U">UHF</span><span class="chk"><input type="checkbox" data-g="J" value="V">VHF</span></div>
+<div class="row" style="margin-top:10px">
+<div class="f"><label for="dn">Dinghies D/ number</label><input type="text" id="dn" class="s4" maxlength="2" inputmode="numeric"></div>
+<div class="f"><label for="dc">Capacity</label><input type="text" id="dc" class="s4" maxlength="3" inputmode="numeric"></div>
+<div class="f"><label>Cover C/</label><span class="chk" style="margin-top:6px"><input type="checkbox" id="dcov">Covered</span></div>
+<div class="w"><label for="dcol">Colour</label><input type="text" id="dcol"></div>
+</div>
+<div style="margin-top:10px"><label for="col">Aircraft colour and markings A/</label><input type="text" id="col"></div>
+<div style="margin-top:10px"><label for="rmk">Remarks N/</label><input type="text" id="rmk"></div>
+<div style="margin-top:10px"><label for="pic">Pilot in command C/</label><input type="text" id="pic"></div>
+</section>
+
+<section>
+<h2>Filed by</h2>
+<div class="row">
+<div class="w"><label for="cap">Signature and capacity</label><input type="text" id="cap" placeholder="e.g. PIC"></div>
+<div class="w"><label for="nm">Name in block letters</label><input type="text" id="nm"></div>
+<div class="f"><label for="fdate">Date</label><input type="text" id="fdate" class="s7" maxlength="10"></div>
+</div>
+</section>
+
+<section>
+<h2>FPL message</h2>
+<pre id="msg"></pre>
+<div class="tools out-tools" style="margin:10px 0 0"><button class="btn" id="copy">Copy message</button></div>
+<ul class="chk-list" id="chk"></ul>
+<p class="foot">The checks cover format only. Always compare against your AIP and the current CA 172-04 instructions.</p>
+</section>
+</main>
+<script>
+var $=function(i){return document.getElementById(i)};
+var IDS=["pri","addr","ftime","orig","id","rules","ftype","num","ac","wake","equip","dep","time","speed","level","route","dest","eet","alt1","alt2","i18","end","pob","dn","dc","dcol","col","rmk","pic","cap","nm","fdate"];
+var SAMPLE={pri:"FF",id:"ZTABC",rules:"V",ftype:"X",num:"01",ac:"ZZZZ",wake:"L",equip:"VZ/N",dep:"ZZZZ",time:"0700",speed:"N0025",level:"VFR",route:"SURVEY DCT 2905S02612E 2905S02614E DCT",dest:"ZZZZ",eet:"0020",i18:"STS/ATFMX TYP/MULTIROTOR COM/HANDHELD VHF NAV/GPS DEP/NAVALHILL 2905S2614E VFR/400FT AGL DEST/NAVALHILL 2905S2614E DOF/251011 OPR/UAS FLIGHT RMK/SARNIL",end:"0024",col:"WHITE WITH BLUE",cap:"PIC"};
+function v(i){return ($(i).value||"").trim().toUpperCase()}
+function grp(g){var o="";document.querySelectorAll('[data-g="'+g+'"]').forEach(function(c){if(c.checked)o+=c.value});return o}
+function build(){
+var a=[];
+a.push("(FPL-"+v("id")+"-"+v("rules")+v("ftype"));
+var n=parseInt(v("num"),10);
+a.push("-"+(n>1?n:"")+v("ac")+"/"+v("wake")+"-"+v("equip"));
+a.push("-"+v("dep")+v("time"));
+a.push("-"+v("speed")+v("level")+(v("route")?" "+v("route").replace(/\s+/g," "):""));
+a.push("-"+v("dest")+v("eet")+(v("alt1")?" "+v("alt1"):"")+(v("alt2")?" "+v("alt2"):""));
+a.push("-"+(v("i18").replace(/\s+/g," ")||"0")+")");
+var head="";
+if(v("addr")||v("ftime")||v("orig")){head=v("pri")+" "+v("addr").replace(/\s+/g," ")+"\n"+v("ftime")+" "+v("orig")+"\n"}
+return head+a.join("\n");
+}
+function checks(){
+var w=[],i18=v("i18").replace(/\s+/g," "),ok=function(r,s){return r.test(s)};
+if(!ok(/^[A-Z0-9]{2,7}$/,v("id")))w.push("Item 7: aircraft ID must be 2 to 7 letters or digits.");
+if(!ok(/^[IVYZ]$/,v("rules")))w.push("Item 8: flight rules must be I, V, Y or Z.");
+if(!ok(/^[SNGMX]$/,v("ftype")))w.push("Item 8: type of flight must be S, N, G, M or X.");
+if(!ok(/^[A-Z0-9]{2,4}$/,v("ac")))w.push("Item 9: aircraft type must be 2 to 4 characters.");
+if(v("ac")==="ZZZZ"&&!/TYP\//.test(i18))w.push("Item 9 is ZZZZ, so Item 18 needs TYP/.");
+if(!ok(/^[LMHJ]$/,v("wake")))w.push("Item 9: wake category must be L, M, H or J.");
+if(!v("equip"))w.push("Item 10: equipment is empty.");
+if(!ok(/^[A-Z]{4}$/,v("dep")))w.push("Item 13: departure must be a 4-letter indicator, or ZZZZ.");
+if(v("dep")==="ZZZZ"&&!/DEP\//.test(i18))w.push("Item 13 is ZZZZ, so Item 18 needs DEP/.");
+var t=v("time");if(!ok(/^([01]\d|2[0-3])[0-5]\d$/,t))w.push("Item 13: time must be HHMM, for example 0700.");
+if(!ok(/^([NK]\d{4}|M\d{3})$/,v("speed")))w.push("Item 15: speed must look like N0025, K0050 or M082.");
+if(!ok(/^(VFR|[FS]\d{3}|A\d{3}|[MS]\d{4})$/,v("level")))w.push("Item 15: level must be VFR, F085, A045 and so on.");
+v("route").split(/\s+/).forEach(function(p){
+if(!p)return;
+if(/[°'’.]/.test(p))w.push("Route: \""+p+"\" has symbols. Write points as 2905S02614E.");
+else if(/^\d/.test(p)&&!/^(\d{4}[NS]\d{5}[EW]|\d{2}[NS]\d{3}[EW])$/.test(p))w.push("Route: \""+p+"\" is not a valid point. Use 4 digits + N/S + 5 digits + E/W.")});
+if(!ok(/^[A-Z]{4}$/,v("dest")))w.push("Item 16: destination must be a 4-letter indicator, or ZZZZ.");
+if(v("dest")==="ZZZZ"&&!/DEST\//.test(i18))w.push("Item 16 is ZZZZ, so Item 18 needs DEST/.");
+var e=v("eet");if(!ok(/^\d{2}[0-5]\d$/,e))w.push("Item 16: EET must be HHMM, for example 0020.");
+var d=i18.match(/DOF\/(\S+)/);
+if(!d)w.push("Item 18: add DOF/YYMMDD (date of flight).");
+else if(!/^\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/.test(d[1]))w.push("Item 18: DOF/"+d[1]+" is not YYMMDD, for example DOF/251011.");
+var en=v("end");
+if(!ok(/^\d{2}[0-5]\d$/,en))w.push("Item 19: endurance must be HHMM.");
+else if(/^\d{4}$/.test(e)&&parseInt(en,10)<=parseInt(e,10))w.push("Item 19: endurance must be longer than the EET.");
+return w;
+}
+function render(){
+$("msg").textContent=build();
+var w=checks(),ul=$("chk");ul.innerHTML="";
+if(!w.length){ul.innerHTML='<li class="ok">No format problems found.</li>'}
+w.forEach(function(s){var l=document.createElement("li");l.className="w1";l.textContent=s;ul.appendChild(l)});
+try{var o={};IDS.forEach(function(i){o[i]=$(i).value});o.c=[].map.call(document.querySelectorAll("input[type=checkbox]"),function(c){return c.checked});localStorage.setItem("aftn-form",JSON.stringify(o))}catch(x){}
+}
+function fill(o){
+IDS.forEach(function(i){$(i).value=o[i]||""});
+document.querySelectorAll("input[type=checkbox]").forEach(function(c,k){c.checked=!!(o.c&&o.c[k])});
+render();
+}
+document.querySelector("main").addEventListener("input",function(e){
+var t=e.target;
+if(t.tagName==="INPUT"&&t.type==="text"||t.tagName==="TEXTAREA"){var p=t.selectionStart;t.value=t.value.toUpperCase();try{t.setSelectionRange(p,p)}catch(x){}}
+render()});
+document.querySelector("main").addEventListener("change",render);
+$("sample").onclick=function(){fill(SAMPLE)};
+$("clear").onclick=function(){fill({pri:"FF"})};
+$("copy").onclick=function(){
+var b=$("copy"),t=build();
+function done(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy message"},1500)}
+try{navigator.clipboard.writeText(t).then(done,function(){})}catch(x){}
+};
+try{var s=localStorage.getItem("aftn-form");if(s){fill(JSON.parse(s))}else{fill({pri:"FF"})}}catch(x){fill({pri:"FF"})}
+</script>
+</body>
+</html>

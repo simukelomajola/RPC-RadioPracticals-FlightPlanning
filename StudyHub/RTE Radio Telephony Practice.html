@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RTE Radio Telephony Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9eff5;--ink:#10243a;--muted:#4b6177;--card:#fff;--line:#b9c9d9;--accent:#1f4e79;--on-accent:#fff;--ok:#1e7a46;--okbg:#e1f4e8;--bad:#b3261e;--badbg:#fbe5e3;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a27;--ink:#e6eef7;--muted:#9bb0c4;--card:#16273a;--line:#2b4259;--accent:#7fb3e6;--on-accent:#0e1a27;--ok:#6fd49a;--okbg:#14382a;--bad:#ff8a80;--badbg:#3f1d1b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1a27;--ink:#e6eef7;--muted:#9bb0c4;--card:#16273a;--line:#2b4259;--accent:#7fb3e6;--on-accent:#0e1a27;--ok:#6fd49a;--okbg:#14382a;--bad:#ff8a80;--badbg:#3f1d1b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 Barlow,system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px 14px 44px}
+h1{font:700 30px/1.1 "Barlow Condensed",Barlow,sans-serif;margin:6px 0 2px}
+.sub{color:var(--muted);margin:0 0 12px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tab{flex:1;font:600 16px Barlow,sans-serif;padding:10px 6px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:8px;cursor:pointer}
+.tab[aria-selected=true]{background:var(--accent);color:var(--on-accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font:600 14px Barlow,sans-serif;padding:6px 11px;border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:16px;cursor:pointer}
+.chip[aria-pressed=true]{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:15px;margin-bottom:10px}
+.face{min-height:150px;display:flex;align-items:center;justify-content:center;text-align:center;font:700 34px/1.15 "Barlow Condensed",Barlow,sans-serif;cursor:pointer;white-space:pre-line;padding:6px;border:1.5px dashed var(--line);border-radius:8px;width:100%;background:transparent;color:var(--ink)}
+.face.back{font:600 20px/1.45 Barlow,sans-serif;color:var(--accent);text-align:left;justify-content:flex-start}
+.hint{color:var(--muted);font-size:14px;text-align:center;margin:6px 0 0}
+.btn{font:600 17px Barlow,sans-serif;background:var(--accent);color:var(--on-accent);border:0;border-radius:8px;padding:11px 20px;margin:12px 8px 0 0;cursor:pointer}
+.btn.alt{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn:focus-visible,.tab:focus-visible,.chip:focus-visible,.face:focus-visible,.opt:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.big{font:700 28px/1.2 "Barlow Condensed",Barlow,sans-serif;margin:4px 0 10px}
+.ans{margin:10px 0 0;padding:12px 14px;border-left:4px solid var(--accent);background:var(--bg);border-radius:0 8px 8px 0;white-space:pre-line;font-weight:600}
+.q{font-weight:600;font-size:19px;margin:0 0 14px}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:transparent;border:1.5px solid var(--line);border-radius:8px;padding:12px 14px;margin:0 0 10px;cursor:pointer}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.opt:disabled{cursor:default}
+.score{font:700 54px/1 "Barlow Condensed",Barlow,sans-serif;margin:6px 0}
+.note{font-size:14px;color:var(--muted);margin-top:14px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<h1>RTE practice</h1>
+<p class="sub">Restricted radio telephony: flashcards, a say-it drill and a quiz. Say every answer out loud.</p>
+<div class="tabs" role="tablist">
+<button class="tab" role="tab" id="t0" aria-selected="true">Flashcards</button>
+<button class="tab" role="tab" id="t1" aria-selected="false">Say it</button>
+<button class="tab" role="tab" id="t2" aria-selected="false">Quiz</button>
+</div>
+
+<div id="p0">
+<div class="chips" id="decks"></div>
+<div class="card">
+<div class="meta"><span id="fdeck"></span><span id="fleft"></span></div>
+<button class="face" id="face" aria-live="polite"></button>
+<p class="hint" id="fhint">Tap the card to flip it</p>
+<div id="frate" hidden><button class="btn" id="got">Got it</button><button class="btn alt" id="again">Again</button></div>
+<div id="fdone" hidden><p class="big">Deck finished</p><button class="btn" id="restart">Go again</button></div>
+</div>
+</div>
+
+<div id="p1" hidden>
+<div class="card">
+<div class="meta"><span>Say it out loud, then reveal</span><span id="dcount"></span></div>
+<p class="big" id="dq"></p>
+<div class="ans" id="da" hidden></div>
+<button class="btn" id="dreveal">Reveal</button><button class="btn alt" id="dnext">Next</button>
+</div>
+</div>
+
+<div id="p2" hidden>
+<div id="quiz">
+<div class="card">
+<div class="meta"><span id="qc"></span><span id="qs"></span></div>
+<p class="q" id="qq"></p>
+<div id="qo"></div>
+<p class="ans" id="qe" hidden></p>
+<button class="btn" id="qn" hidden></button>
+</div>
+</div>
+<div id="qend" class="card" hidden>
+<p class="sub" style="margin:0">Your score</p>
+<div class="score" id="qf"></div>
+<p id="qv"></p>
+<button class="btn" id="qr">Try again</button>
+</div>
+</div>
+
+<p class="note">Wording follows ICAO radiotelephony phraseology. Where your RTE handout or examiner uses a different format, follow them.</p>
+</main>
+<script>
+var $=function(i){return document.getElementById(i)};
+function sh(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function rnd(n){return Math.floor(Math.random()*n)}
+var PH="Alfa Bravo Charlie Delta Echo Foxtrot Golf Hotel India Juliett Kilo Lima Mike November Oscar Papa Quebec Romeo Sierra Tango Uniform Victor Whiskey X-ray Yankee Zulu".split(" ");
+var NUM=["ZE-RO","WUN","TOO","TREE","FOW-er","FIFE","SIX","SEV-en","AIT","NIN-er"];
+var DECKS={
+"Alphabet":PH.map(function(w,i){return[String.fromCharCode(65+i),w.toUpperCase()]}),
+"Numerals":NUM.map(function(w,i){return[String(i),w]}).concat([["Decimal point","DAY-SEE-MAL"],["Hundred","HUN-dred"],["Thousand","TOU-SAND"]]),
+"Phrases":[
+["ROGER","I have received all of your last transmission."],
+["WILCO","I understand your message and will comply with it."],
+["AFFIRM","Yes."],
+["NEGATIVE","No, or permission not granted, or that is not correct."],
+["STANDBY","Wait and I will call you."],
+["SAY AGAIN","Repeat all, or the following part, of your last transmission."],
+["READ BACK","Repeat all, or the specified part, of this message back to me exactly as received."],
+["CORRECTION","An error has been made in this transmission. The correct version is…"],
+["DISREGARD","Ignore."],
+["VERIFY","Check with the originator."],
+["CONFIRM","I request verification of (clearance, instruction, action, information)."],
+["APPROVED","Permission for the proposed action is granted."],
+["REQUEST","I should like to know, or I wish to obtain…"],
+["WORDS TWICE","As a request: communication is difficult, please send every word twice."]],
+"Emergency":[
+["MAYDAY","Distress: grave and imminent danger, immediate help needed. Said three times: MAYDAY MAYDAY MAYDAY."],
+["PAN-PAN","Urgency: a concern for the safety of the aircraft or a person, but no immediate help needed. Said three times."],
+["Emergency frequency","121.5 MHz"],
+["Squawk 7700","General emergency"],
+["Squawk 7600","Radio failure"],
+["Squawk 7500","Unlawful interference (hijack)"],
+["Order of a MAYDAY call","1. MAYDAY MAYDAY MAYDAY\n2. Station addressed and your callsign\n3. Nature of the emergency\n4. Your intentions\n5. Position, level and heading\n6. Other information, such as persons on board"],
+["Radio failure: first steps","Check volume, frequency, headset and plugs, and the fuse or circuit breaker. Try another frequency. Transmit blind. Squawk 7600 if fitted. Land at the nearest suitable aerodrome."],
+["Transmitting without a reply","Say TRANSMITTING BLIND, then give your message."]],
+"Readability":[
+["Readability 1","Unreadable"],["Readability 2","Readable now and then"],["Readability 3","Readable but with difficulty"],["Readability 4","Readable"],["Readability 5","Perfectly readable"],
+["Radio check reply","Station, callsign, READABILITY (number). Example: READABILITY FIVE."],
+["Callsign shortening","Full on first contact. Shorten to the first letter and last two only after the ground station uses the short form. ZS-ABC becomes ZULU BRAVO CHARLIE."],
+["Order of a first call","Station you are calling first, then your own callsign, then your message."]],
+"Terms":[
+["QNH","Altimeter setting that makes the altimeter read altitude above mean sea level."],
+["QFE","Altimeter setting that makes the altimeter read height above the aerodrome (zero on the ground)."],
+["AMSL","Above mean sea level"],["AGL","Above ground level"],["ETA","Estimated time of arrival"],
+["SSR","Secondary surveillance radar (works with the transponder)"],["ELT","Emergency locator transmitter"],
+["ATIS","Automatic terminal information service: a recorded aerodrome information broadcast"],
+["FIS","Flight information service"],
+["Squelch","Mutes the background hiss when no signal is received. Set too high, it blocks weak calls."],
+["Volume","Controls how loud the received audio is. It does not change what others hear."],
+["AIP","Aeronautical Information Publication: the permanent aviation information for the country."],
+["NOTAM","Notice to airmen: urgent or temporary information about a hazard, facility or procedure."],
+["AIC","Aeronautical Information Circular: explanatory or administrative information that is not a NOTAM or AIP change."],
+["AIP SUP","AIP Supplement: temporary changes to the AIP, either long duration or with extensive text and graphics."],
+["SACAA website","The regulator: regulations, licensing and forms such as CA 172-04."],
+["ATNS website","Air Traffic and Navigation Services: aeronautical information such as the AIP, NOTAMs, AICs and AIP SUPs."]]
+};
+var deck="Alphabet",queue=[],flip=false,total=0;
+function chips(){var c=$("decks");c.innerHTML="";Object.keys(DECKS).forEach(function(k){var b=document.createElement("button");b.className="chip";b.textContent=k;b.setAttribute("aria-pressed",k===deck);b.onclick=function(){deck=k;chips();startDeck()};c.appendChild(b)})}
+function startDeck(){queue=sh(DECKS[deck]);total=queue.length;$("fdone").hidden=true;showCard()}
+function showCard(){
+$("fdeck").textContent=deck;
+if(!queue.length){$("face").hidden=true;$("frate").hidden=true;$("fhint").hidden=true;$("fdone").hidden=false;$("fleft").textContent="0 left";return}
+$("face").hidden=false;$("fhint").hidden=false;flip=false;
+$("face").textContent=queue[0][0];$("face").className="face";$("frate").hidden=true;$("fhint").textContent="Tap the card to flip it";
+$("fleft").textContent=queue.length+" left";
+}
+$("face").onclick=function(){if(!queue.length)return;flip=!flip;$("face").textContent=queue[0][flip?1:0];$("face").className="face"+(flip?" back":"");$("frate").hidden=!flip;$("fhint").textContent=flip?"How did you do?":"Tap the card to flip it"};
+$("got").onclick=function(){queue.shift();showCard()};
+$("again").onclick=function(){queue.push(queue.shift());showCard()};
+$("restart").onclick=startDeck;
+
+function digits(s){return s.split("").map(function(c){return c==="."?"DAY-SEE-MAL":NUM[+c]}).join(" ")}
+function alt(n){var t=Math.floor(n/1000),h=(n%1000)/100,o=[];if(t)o.push(digits(String(t))+" TOU-SAND");if(h)o.push(digits(String(h))+" HUN-dred");return o.join(" ")}
+function letters(s){return s.split("").map(function(c){return PH[c.charCodeAt(0)-65].toUpperCase()}).join(" ")}
+var G=[
+function(){var l="",i;for(i=0;i<3;i++)l+=String.fromCharCode(65+rnd(26));var p=["ZS","ZT"][rnd(2)],f=p+l;return["Callsign "+p+"-"+l,"Full: "+letters(p+l)+"\nShort form (only after the ground station uses it): "+letters(p[0]+l.slice(1))]},
+function(){var f=(118+rnd(19))+"."+rnd(10);return["Frequency "+f,digits(f)]},
+function(){var q=1000+rnd(36);return["QNH "+q,"QNH "+digits(String(q))]},
+function(){var n=(1+rnd(19))*500,t=n>=1000?Math.floor(n/1000)+" "+("00"+(n%1000)).slice(-3):String(n);return["Altitude "+t+" ft",alt(n)]},
+function(){var r=1+rnd(36),s=("0"+r).slice(-2);return["Runway "+s,"RUNWAY "+digits(s)]},
+function(){var c="";for(var i=0;i<4;i++)c+=rnd(8);return["Squawk "+c,"SQUAWK "+digits(c)]}
+],dn=0;
+function nextDrill(){var x=G[rnd(G.length)]();dn++;$("dq").textContent=x[0];$("da").textContent=x[1];$("da").hidden=true;$("dcount").textContent="Drill "+dn;$("dreveal").hidden=false}
+$("dreveal").onclick=function(){$("da").hidden=false;$("dreveal").hidden=true};
+$("dnext").onclick=nextDrill;
+
+var QZ=[
+{q:"Which word means “I have received all of your last transmission”?",a:["ROGER","WILCO","AFFIRM","STANDBY"],e:"ROGER only acknowledges receipt. It does not mean yes and it does not mean you will comply."},
+{q:"Which word means “I understand and will comply”?",a:["WILCO","ROGER","AFFIRM","CORRECTION"],e:"WILCO is short for “will comply”. It includes ROGER, so you never say both."},
+{q:"How do you say “yes” on the radio?",a:["AFFIRM","ROGER","YES","COPY"],e:"AFFIRM means yes. Say NEGATIVE for no."},
+{q:"A controller says “STANDBY”. What does it mean?",a:["Wait and I will call you","Repeat your message","Ignore the last message","Permission granted"],e:"STANDBY means wait. The controller will call you back."},
+{q:"You did not hear the last message. What do you say?",a:["SAY AGAIN","REPEAT","WHAT","VERIFY"],e:"SAY AGAIN asks for the message to be repeated. Do not use REPEAT in radio phraseology."},
+{q:"Which squawk code means radio failure?",a:["7600","7700","7500","7000"],e:"7600 is radio failure, 7700 is general emergency and 7500 is unlawful interference."},
+{q:"Which squawk code means unlawful interference (hijack)?",a:["7500","7600","7700","1200"],e:"7500 is unlawful interference."},
+{q:"What is the international VHF emergency frequency?",a:["121.5 MHz","118.0 MHz","123.45 MHz","130.0 MHz"],e:"121.5 MHz is the VHF emergency frequency."},
+{q:"Which call is used for grave and imminent danger?",a:["MAYDAY MAYDAY MAYDAY","PAN-PAN PAN-PAN PAN-PAN","SECURITE SECURITE SECURITE","ALERT ALERT ALERT"],e:"MAYDAY is distress. PAN-PAN is urgency. Both are said three times."},
+{q:"Your engine is running rough but you are not in immediate danger and need to land soon. Which call fits best?",a:["PAN-PAN PAN-PAN PAN-PAN","MAYDAY MAYDAY MAYDAY","STANDBY STANDBY STANDBY","NEGATIVE NEGATIVE NEGATIVE"],e:"PAN-PAN is for urgency: safety is a concern but there is no grave and imminent danger."},
+{q:"How is the number 5 pronounced?",a:["FIFE","FIVE","FEE-VE","PENTA"],e:"5 is FIFE so it is not confused with NINE. 9 is NIN-er."},
+{q:"How is the number 3 pronounced?",a:["TREE","THREE","THUH-REE","TRI"],e:"3 is TREE. The th sound is dropped."},
+{q:"How do you say 118.7?",a:["WUN WUN AIT DAY-SEE-MAL SEV-en","ONE ONE EIGHT POINT SEVEN","WUN WUN AIT POINT SEV-en","ONE EIGHTEEN DECIMAL SEVEN"],e:"Each digit is said on its own, and the decimal point is DAY-SEE-MAL."},
+{q:"How do you say an altitude of 3 500 ft?",a:["TREE TOU-SAND FIFE HUN-dred","THIRTY FIVE HUNDRED","TREE FIFE ZE-RO ZE-RO","THREE POINT FIVE"],e:"Thousands and hundreds are said as a digit followed by TOU-SAND or HUN-dred."},
+{q:"ZS-ABC is in the circuit and the ground station calls you “Zulu Bravo Charlie”. How may you reply?",a:["Use the short form ZULU BRAVO CHARLIE","Keep using the full callsign only","Use ZS-ABC as a word","Use only the aircraft type"],e:"You may shorten to the first letter and last two only after the ground station has used the short form."},
+{q:"What is the correct order for a first call?",a:["Station called, then your callsign, then message","Your callsign, then station called, then message","Message, then callsign","Station called, then message, then callsign"],e:"Call the station first, then identify yourself. Example: “Lanseria Tower, ZS-ABC”."},
+{q:"A radio check reply says “READABILITY FIVE”. What does it mean?",a:["Perfectly readable","Readable with difficulty","Unreadable","Readable now and then"],e:"1 unreadable, 2 readable now and then, 3 readable but with difficulty, 4 readable, 5 perfectly readable."},
+{q:"Which publication holds temporary, urgent information such as a closed runway?",a:["NOTAM","AIP","AIC","ATIS"],e:"A NOTAM carries urgent or temporary information. The AIP holds permanent information."},
+{q:"What does squelch do?",a:["Mutes background noise when no signal is received","Makes the received audio louder","Changes your transmit power","Switches the frequency"],e:"Squelch mutes the hiss between transmissions. Volume controls loudness."},
+{q:"You cannot get a reply and think your transmitter works. What do you say before your message?",a:["TRANSMITTING BLIND","NO REPLY","MAYDAY","STANDBY"],e:"TRANSMITTING BLIND tells others you are sending without being able to hear a reply."},
+{q:"A clearance says “squawk 4 2 1 3”. What must you do?",a:["Read it back and set it","Set it without replying","Ignore it in VFR","Reply ROGER only"],e:"SSR codes, runway in use, altimeter settings and level instructions are read back."}
+],qi,qs;
+function qstart(){qi=0;qs=0;$("qend").hidden=true;$("quiz").hidden=false;qshow()}
+function qshow(){
+var d=QZ[qi];$("qc").textContent="Question "+(qi+1)+" of "+QZ.length;$("qs").textContent="Score "+qs;$("qq").textContent=d.q;
+$("qe").hidden=true;$("qn").hidden=true;var b=$("qo");b.innerHTML="";
+sh(d.a).forEach(function(t){var o=document.createElement("button");o.className="opt";o.textContent=t;o.onclick=function(){qpick(o,t===d.a[0])};b.appendChild(o)});
+}
+function qpick(btn,right){
+var d=QZ[qi];
+[].forEach.call($("qo").children,function(b){b.disabled=true;if(b.textContent===d.a[0])b.classList.add("ok")});
+if(right)qs++;else btn.classList.add("bad");
+$("qs").textContent="Score "+qs;$("qe").textContent=(right?"Correct. ":"Not quite. ")+d.e;$("qe").hidden=false;
+$("qn").textContent=qi===QZ.length-1?"See results":"Next question";$("qn").hidden=false;$("qn").focus();
+}
+$("qn").onclick=function(){if(qi===QZ.length-1){$("quiz").hidden=true;$("qend").hidden=false;$("qf").textContent=qs+" / "+QZ.length;var p=qs/QZ.length;$("qv").textContent=p===1?"Perfect. Now say every answer out loud.":p>=.8?"Good. Redo the flashcards for the ones you missed.":"Keep going. Work through the flashcard decks, then try again."}else{qi++;qshow()}};
+$("qr").onclick=qstart;
+
+var T=["t0","t1","t2"];
+T.forEach(function(id,i){$(id).onclick=function(){T.forEach(function(x,j){$(x).setAttribute("aria-selected",i===j);$("p"+j).hidden=i!==j})}});
+chips();startDeck();nextDrill();qstart();
+</script>
+</body>
+</html>
